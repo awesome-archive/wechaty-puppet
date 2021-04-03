@@ -5,7 +5,8 @@ export interface RoomMemberQueryFilter {
 }
 
 export interface RoomQueryFilter {
-  topic: string | RegExp,
+  id?    : string
+  topic? : string | RegExp,
 }
 
 export interface RoomPayload {
@@ -15,6 +16,7 @@ export interface RoomPayload {
   avatar?      : string,
   memberIdList : string[],
   ownerId?     : string,
+  adminIdList  : string[],
 }
 
 export interface RoomMemberPayload {

@@ -4,15 +4,21 @@ export enum ContactGender {
   Female  = 2,
 }
 
+/**
+ * Huan(202004) TODO: Lock the ENUM number (like protobuf) ?
+ */
 export enum ContactType {
-  Unknown = 0,
-  Personal,
-  Official,
+  Unknown     = 0,
+  Individual  = 1,
+  Official    = 2,
+  Corporation = 3,
 }
 
 export interface ContactQueryFilter {
-  name?:   string | RegExp,
   alias?:  string | RegExp,
+  id?:     string,
+  name?:   string | RegExp,
+  weixin?:  string,
 }
 
 export interface ContactPayload {
@@ -22,7 +28,7 @@ export interface ContactPayload {
   name   : string,
   avatar : string,
 
-  address?   : string,
+  address?   : string,  // Huan(202001): what's this for?
   alias?     : string,
   city?      : string,
   friend?    : boolean,
@@ -30,6 +36,12 @@ export interface ContactPayload {
   signature? : string,
   star?      : boolean,
   weixin?    : string,
+
+  phone        : string[],
+  corporation? : string,
+  title?       : string,
+  description? : string,
+  coworker?    : boolean,
 }
 
 /** @hidden */

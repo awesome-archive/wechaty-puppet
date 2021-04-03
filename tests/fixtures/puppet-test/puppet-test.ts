@@ -1,42 +1,32 @@
-#!/usr/bin/env ts-node
-
-// tslint:disable:arrow-parens
-// tslint:disable:max-line-length
-// tslint:disable:member-ordering
-// tslint:disable:no-shadowed-variable
-// tslint:disable:unified-signatures
-// tslint:disable:no-console
-
 import {
-  // ContactGender,
-  ContactPayload,
-  ContactQueryFilter,
-  // ContactType,
-
-  FileBox,
-
-  FriendshipPayload,
-  MessagePayload,
-  ImageType,
-
   Puppet,
-
-  RoomInvitationPayload,
-
-  RoomMemberPayload,
-  RoomPayload,
-  RoomQueryFilter,
-
-  UrlLinkPayload,
+  FileBox,
+  ContactPayload,
+  FriendshipPayload,
+  ImageType,
   MiniProgramPayload,
+  UrlLinkPayload,
+  MessagePayload,
+  MessageQueryFilter,
+  RoomInvitationPayload,
+  RoomPayload,
+  RoomMemberPayload,
+  RoomQueryFilter,
+  ContactQueryFilter,
+}                           from '../../../src/mod'
 
-  VERSION,
-}                             from 'wechaty-puppet'
+/**
+ * expose to public for internal methods:
+ */
+import { MessagePayloadFilterFunction } from '../../../src/schemas/message'
+import { RoomPayloadFilterFunction }    from '../../../src/schemas/room'
+import { ContactPayloadFilterFunction } from '../../../src/schemas/contact'
+import { FriendshipAddOptions } from '../../../src/schemas/friendship'
 
-class PuppetTest extends Puppet {
+export class PuppetTest extends Puppet {
 
-  public async start () : Promise<void> { return {} as any }
-  public async stop ()  : Promise<void> { return {} as any }
+  public async start () : Promise<void> { return super.start() }
+  public async stop ()  : Promise<void> { return super.stop() }
 
   public async ding (data?: string)   : Promise<void> { return data as any as void }
   public async logout () : Promise<void> { return {} as any }
@@ -45,19 +35,20 @@ class PuppetTest extends Puppet {
    *
    * ContactSelf
    *
+   *
    */
   public async contactSelfQRCode ()                     : Promise<string> { return '' }
-  public async contactSelfName (name: string)           : Promise<void> { void name }
-  public async contactSelfSignature (signature: string) : Promise<void> { void signature }
+  public async contactSelfName (name: string)           : Promise<void> { return void name }
+  public async contactSelfSignature (signature: string) : Promise<void> { return void signature }
 
   /**
    *
    * Tag
    *
    */
-  public async tagContactAdd (id: string, contactId: string) : Promise<void> { return void { contactId, id } }
-  public async tagContactRemove (id: string, contactId: string) : Promise<void> { return void { contactId, id } }
-  public async tagContactDelete (id: string) : Promise<void> { return void { id } }
+  public async tagContactAdd (tagId: string, contactId: string) : Promise<void> { return void { contactId, tagId } }
+  public async tagContactRemove (tagId: string, contactId: string) : Promise<void> { return void { contactId, tagId } }
+  public async tagContactDelete (tagId: string) : Promise<void> { return void { tagId } }
   public async tagContactList (contactId?: string) : Promise<string[]> { return [contactId || ''] }
 
   /**
@@ -75,7 +66,7 @@ class PuppetTest extends Puppet {
 
   public async contactPhone (contactId: string, phoneList: string[]): Promise<void> { return { contactId, phoneList } as any }
 
-  public async contactList () : Promise<string[]> { return {} as any }
+  public async contactList ()                    : Promise<string[]> { return {} as any }
 
   public async contactCorporationRemark (contactId: string, corporationRemark: string | null) : Promise<void> { return { contactId, corporationRemark } as any }
 
@@ -92,9 +83,9 @@ class PuppetTest extends Puppet {
   public async friendshipRawPayload (id: string)            : Promise<any> { return { id } as any }
   public async friendshipRawPayloadParser (rawPayload: any) : Promise<FriendshipPayload> { return rawPayload }
 
-  public async friendshipSearchPhone (phone: string) : Promise<string | null> { return phone }
-  public async friendshipSearchWeixin (weixin: string) : Promise<string | null> { return weixin }
-  public async friendshipAdd (contactId: string, hello?: string) : Promise<void> { return { contactId, hello } as any }
+  public async friendshipSearchPhone (phone: string) : Promise<null | string> { return phone }
+  public async friendshipSearchWeixin (weixin: string) : Promise<null | string> { return weixin }
+  public async friendshipAdd (contactId: string, option?: FriendshipAddOptions) : Promise<void> { return { contactId, option } as any }
   public async friendshipAccept (friendshipId: string)           : Promise<void> { return { friendshipId } as any }
 
   /**
@@ -102,29 +93,30 @@ class PuppetTest extends Puppet {
    * Message
    *
    */
-  public async messageFile (messageId: string) : Promise<FileBox> { return { messageId } as any }
-  public async messageUrl (messageId: string)  : Promise<UrlLinkPayload> { return { messageId } as any }
-  public async messageImage (messageId: string, imageType: ImageType) : Promise<FileBox> { return { imageType, messageId } as any }
-  public async messageContact (messageId: string)  : Promise<string> { return { messageId } as any }
-  public async messageMiniProgram (messageId: string)  : Promise<MiniProgramPayload> { return { messageId } as any }
+  public async messageContact     (messageId: string)                       : Promise<string> { return { messageId } as any }
+  public async messageFile        (messageId: string)                       : Promise<FileBox> { return { messageId } as any }
+  public async messageImage       (messageId: string, imageType: ImageType) : Promise<FileBox> { return { imageType, messageId } as any }
+  public async messageMiniProgram (messageId: string)                       : Promise<MiniProgramPayload> { return { messageId } as any }
+  public async messageUrl         (messageId: string)                       : Promise<UrlLinkPayload> { return { messageId } as any }
 
-  public async messageForward (to: string, messageId: string)              : Promise<void | string> { return { messageId, to } as any }
-  public async messageSendContact (receiver: string, contactId: string)    : Promise<void | string> { return { contactId, receiver } as any }
-  public async messageSendFile (to: string, file: FileBox)                 : Promise<void | string> { return { file, to } as any }
-  public async messageSendText (to: string, text: string)                  : Promise<void | string> { return { text, to } as any }
-  public async messageSendUrl (to: string, urlLinkPayload: UrlLinkPayload) : Promise<void | string> { return { to, urlLinkPayload } as any }
-  public async messageSendMiniProgram (to: string, miniProgramPayload: MiniProgramPayload) : Promise<void> { return { miniProgramPayload, to } as any }
+  public async messageForward         (conversationId: string, messageId: string)                      : Promise<void | string> { return { conversationId, messageId } as any }
+  public async messageSendContact     (conversationId: string, contactId: string)                      : Promise<void | string> { return { contactId, conversationId } as any }
+  public async messageSendFile        (conversationId: string, file: FileBox)                          : Promise<void | string> { return { conversationId, file } as any }
+  public async messageSendText        (conversationId: string, text: string)                           : Promise<void | string> { return { conversationId, text } as any }
+  public async messageSendUrl         (conversationId: string, urlLinkPayload: UrlLinkPayload)         : Promise<void | string> { return { conversationId, urlLinkPayload } as any }
+  public async messageSendMiniProgram (conversationId: string, miniProgramPayload: MiniProgramPayload) : Promise<void | string> { return { conversationId, miniProgramPayload } as any }
 
-  public async messageRecall (messageId: string) : Promise<boolean> { void messageId; return true }
   public async messageRawPayload (id: string)            : Promise<any> { return { id } as any }
   public async messageRawPayloadParser (rawPayload: any) : Promise<MessagePayload> { return { rawPayload } as any }
+
+  public async messageRecall (messageId: string)                : Promise<boolean> { return { messageId } as any }
 
   /**
    *
    * Room Invitation
    *
    */
-  public async roomInvitationAccept (roomInvitationId: string): Promise<void> { void roomInvitationId }
+  public async roomInvitationAccept (_: string): Promise<void> { }
 
   public async roomInvitationRawPayload (roomInvitationId: string) : Promise<any> { return { roomInvitationId } as any }
   public async roomInvitationRawPayloadParser (rawPayload: any)    : Promise<RoomInvitationPayload> { return rawPayload }
@@ -161,33 +153,38 @@ class PuppetTest extends Puppet {
   /**
    * expose to public for internal methods:
    */
+  public messageQueryFilterFactory (
+    query: MessageQueryFilter,
+  ): MessagePayloadFilterFunction {
+    return super.messageQueryFilterFactory(query)
+  }
+
   public roomQueryFilterFactory (
     query: RoomQueryFilter,
-  ): any {
+  ): RoomPayloadFilterFunction {
     return super.roomQueryFilterFactory(query)
   }
 
   public contactQueryFilterFactory (
     query: ContactQueryFilter,
-  ): any {
+  ): ContactPayloadFilterFunction {
     return super.contactQueryFilterFactory(query)
   }
 
+  /**
+   * FIXME: Huan(202008)
+   *  this method has overwrite the super.reset() without any functionality
+   *  need to change to super.reset()
+   *  however, we need to solve
+   *    `error TS1034: 'super' must be followed by an argument list or member access.`
+   *  first.
+   *
+   */
+  // private reset (reason: string): void {
+  //   // return super.reset(reason)
+  //   void reason
+  // }
+
 }
 
-async function main () {
-  if (VERSION === '0.0.0') {
-    throw new Error('version should not be 0.0.0 when publishing')
-  }
-
-  const puppet = new PuppetTest()
-  console.info(`Puppet v${puppet.version()} smoking test passed.`)
-  return 0
-}
-
-main()
-  .then(process.exit)
-  .catch(e => {
-    console.error(e)
-    process.exit(1)
-  })
+export default PuppetTest
